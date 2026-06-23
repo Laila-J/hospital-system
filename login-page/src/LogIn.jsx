@@ -22,68 +22,70 @@ function LogIn(){
 
     const navigate=useNavigate();
 
-    const handleSubmit=()=>{
-        
+    const handleSubmit=async()=>{
+
         let valid=true;
 
-        if(!email.includes("@")){
-            setEmailError("Invalid email!");
-            valid=false;
-        }
-        else{
-            setEmailError("");
-        }
-
+        // FIX 5: check empty first, then format
         if(email===""){
-            setValidEmail("Email is required!")
+            setValidEmail("Email is required!");
+            setEmailError("");
             valid=false;
-        }
-        else{
+        }else if(!email.includes("@")){
+            setEmailError("Invalid email!");
+            setValidEmail("");
+            valid=false;
+        }else{
+            setEmailError("");
             setValidEmail("");
         }
 
-        if(password.length<8){
-            setPasswordError("Password must be atleast 8 characters!");
-            valid=false;
-        }
-        else{
-            setPasswordError("");
-        }
-
+        // FIX 5: check empty first, then length
         if(password===""){
-            setValidPassword("Password is required!")
+            setValidPassword("Password is required!");
+            setPasswordError("");
             valid=false;
-        }
-        else{
+        }else if(password.length<8){
+            setPasswordError("Password must be atleast 8 characters!");
+            setValidPassword("");
+            valid=false;
+        }else{
+            setPasswordError("");
             setValidPassword("");
         }
 
         if(valid){
-            const loginUser=async()=>{
-                try{
-                    const res=await fetch("http://localhost:5000/api/auth/login",{
-                        method:"POST",
-                        headers:{
-                            "Content-Type":"application/json"
-                        },
-                        body:JSON.stringify({email,password})
-                    });
-                    const data=await res.json();
+            try{
+                // FIX 1: http not https
+                const res=await fetch("http://localhost:5000/api/auth/login",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    // FIX 3: send remember to API
+                    body:JSON.stringify({email, password, remember: checked})
+                });
+                console.log("response:", res.status);
+                
+                const data=await res.json();
 
-                    console.log(data);
+                console.log(data);
 
-                    if(res.ok){
-                        navigate("/AppointmentBooking");
+                if(res.ok){
+                    // FIX 4: save token to localStorage
+                    localStorage.setItem("token", data.token);
+                    navigate("/AppointmentBooking");
+                }else{
+                    if(data.errors?.password){
+                        setPasswordError(data.errors.password);
+                    }else{
+                        alert(data.message || "Login failed. Please try again.");
                     }
-                    else{
-                        alert(data.message);
-                    }
-                } catch(error){
-                    console.log(error);
                 }
-            };
-            loginUser();
-            
+            }catch(error){
+                console.log(error);
+                alert("Cannot connect to server. Please make sure the server is running.");
+            }
         }
     }
 
@@ -127,7 +129,7 @@ function LogIn(){
                         LogIn
                     </Button>
 
-                    <Text color="gray.300" mx="auto" >Forgot ypur password? No worries! <Link to="/ResetPassword" >Reset password</Link></Text>
+                    <Text color="gray.300" mx="auto" >Forgot your password? No worries! <Link to="/ResetPassword" >Reset password</Link></Text>
 
                     <Text color="gray.300" mx="auto" >Don't have an account? <Link to="/SignUp">Sign Up</Link> </Text>
                 </VStack>

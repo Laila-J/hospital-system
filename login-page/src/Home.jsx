@@ -56,6 +56,7 @@ export default function Home() {
         console.log(data);
 
         if (res.ok) {
+          console.log("subsecribed");
             toast({
                 title: "Subscription successful",
                 description: "You have subscribed to our newsletter.",

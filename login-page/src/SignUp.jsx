@@ -54,13 +54,14 @@ function SignUp(){
     const[allergiesError,setAllergiesError]=useState("");
 
     const[gender,setGender]=useState("");
+    const[yearsOfExperience,setYearsOfExperience]=useState("");
 
     const navigate=useNavigate();
 
 
      const handleSubmit=async()=>{
         console.log("signup clicked");
-        
+
         let valid=true;
 
         if(firstName===""){
@@ -73,122 +74,146 @@ function SignUp(){
         if(lastName===""){
             setLastNameError("Last name is required");
             valid=false;
-        }
-        else{
+        }else{
             setLastNameError("");
         }
 
         if(nationalNumber===""){
             setNationalNumberError("National number is required");
             valid=false;
-        }
-        else{
+        }else{
             setNationalNumberError("");
         }
 
         if(profileType===""){
             setProfileTypeError("Please choose your profile type");
             valid=false;
-        }
-        else{
+        }else{
             setProfileTypeError("");
         }
 
-        if(occupation===""){
-            setOccupationError("Occupation is required");
-            valid=false;
-        }
-        else{
-            setOccupationError("");
-        }
+        // FIX 2: validate doctor fields only when profileType is Doctor
+        if(profileType==="Doctor"){
+            if(occupation===""){
+                setOccupationError("Occupation is required");
+                valid=false;
+            }else{
+                setOccupationError("");
+            }
 
-        if(licenseSourse===""){
-            setLicenseSourceError("License source is required");
-            valid=false;
-        }
-        else{
+            if(licenseSourse===""){
+                setLicenseSourceError("License source is required");
+                valid=false;
+            }else{
+                setLicenseSourceError("");
+            }
+        }else{
+            setOccupationError("");
             setLicenseSourceError("");
         }
 
-        if(bloodType===""){
-            setBloodTypeError("You must choose your blood type");
-            valid=false;
-        }
-        else{
-            setBloodTypeError("");
-        }
+        // FIX 2: validate patient fields only when profileType is Patient
+        if(profileType==="Patient"){
+            if(bloodType===""){
+                setBloodTypeError("You must choose your blood type");
+                valid=false;
+            }else{
+                setBloodTypeError("");
+            }
 
-        if(allergies===""){
-            setAllergiesError("Please declare if you have any allergies");
-            valid=false;
-        }
-        else{
+            if(allergies===""){
+                setAllergiesError("Please declare if you have any allergies");
+                valid=false;
+            }else{
+                setAllergiesError("");
+            }
+        }else{
+            setBloodTypeError("");
             setAllergiesError("");
         }
 
-        if(!email.includes("@")){
-            setEmailError("Invalid email!");
-            valid=false;
-        }
-        else{
-            setEmailError("");
-        }
-
         if(email===""){
-            setValidEmail("Email is required!")
+            setValidEmail("Email is required!");
             valid=false;
-        }
-        else{
+        }else{
             setValidEmail("");
         }
 
-        if(password.length<8){
-            setPasswordError("Password must be atleast 8 characters!");
+        if(email!=="" && !email.includes("@")){
+            setEmailError("Invalid email!");
             valid=false;
-        }
-        else{
-            setPasswordError("");
+        }else{
+            setEmailError("");
         }
 
         if(password===""){
-            setValidPassword("Password is required!")
+            setValidPassword("Password is required!");
             valid=false;
-        }
-        else{
+        }else{
             setValidPassword("");
         }
 
-        if(valid){
-            
-                try{
-                    const res=await fetch("https://localhost:5000/api/auth/register",{
-                        method:"POST",
-                        headers:{
-                            "Content-Type":"application/json",
-                        },
-                        body:JSON.stringify({
-                            firstName,
-                            lastName,
-                            email,
-                            password,
-                            gender,
-                            profileType,
-                            nationalNumber,
-                        }),
-                    });
-                console.log("status:",res.status);
-                const text=await res.text();
-                console.log("raw response:",text);
-                
-
-                navigate("/Home")
-                } catch(error){
-                    console.log("error:",error);
-                }
-               
-            }
-          
+        if(password!=="" && password.length<8){
+            setPasswordError("Password must be atleast 8 characters!");
+            valid=false;
+        }else{
+            setPasswordError("");
         }
+
+        if(valid){
+            try{
+                // FIX 1: http not https for local development
+                const res=await fetch("http://localhost:5000/api/auth/register",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json",
+                    },
+                    // FIX 3: send doctor/patient specific fields based on profileType
+                    body:JSON.stringify({
+                        firstName,
+                        lastName,
+                        email,
+                        password,
+                        gender,
+                        profileType,
+                        nationalNumber,
+                        ...(profileType==="Doctor" && {
+                            occupation,
+                            licenseSource: licenseSourse,
+                            yearsOfExperience,
+                        }),
+                        ...(profileType==="Patient" && {
+                            dateOfBirth: date,
+                            bloodType,
+                            allergies,
+                        }),
+                    }),
+                });
+
+                const data=await res.json();
+                console.log("status:",res.status);
+                console.log("response:",data);
+
+                if(res.ok){
+                    // Save token to localStorage for use in protected routes
+                    localStorage.setItem("token", data.token);
+                    navigate("/Home");
+                }else{
+                    // Show server-side field errors if any
+                    if(data.errors){
+                        if(data.errors.email) setEmailError(data.errors.email);
+                        if(data.errors.nationalNumber) setNationalNumberError(data.errors.nationalNumber);
+                        if(data.errors.password) setPasswordError(data.errors.password);
+                    }else{
+                        alert(data.message || "Registration failed. Please try again.");
+                    }
+                }
+            }catch(error){
+                console.log("error:",error);
+                alert("Cannot connect to server. Please make sure the server is running.");
+            }
+        }
+    }
     
 
     return(
@@ -254,10 +279,10 @@ function SignUp(){
                         )}
 
                         <Text color="gray.300" fontSize={20}>Years of experience:</Text>
-                        <Select bg="gray.300" w="60%" >
+                        <Select bg="gray.300" w="60%" value={yearsOfExperience} onChange={(e)=>setYearsOfExperience(e.target.value)} >
                             <option value="" disabled hidden >years of experience </option>
                             <option value="1 - 5">1 - 5</option>
-                            <option value="5 - 10" >5 -10</option>
+                            <option value="5 - 10" >5 - 10</option>
                             <option value="10 +" >10 +</option>
                         </Select>
 

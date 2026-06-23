@@ -17,6 +17,7 @@ function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [validPassword, setValidPassword] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const { token } = useParams();
   const navigate = useNavigate();
@@ -24,25 +25,26 @@ function ResetPassword() {
   const handleSubmit = async () => {
     let valid = true;
 
-    // empty check
+    // empty check first, then length (FIX 1: was running both checks simultaneously)
     if (password === "") {
       setValidPassword("Password is required!");
+      setPasswordError("");
       valid = false;
-    } else {
-      setValidPassword("");
-    }
-
-    // length check
-    if (password.length < 8) {
+    } else if (password.length < 8) {
       setPasswordError("Password must be atleast 8 characters!");
+      setValidPassword("");
       valid = false;
     } else {
       setPasswordError("");
+      setValidPassword("");
     }
 
-    // confirm password check
-    if (password !== confirmPassword) {
+    // FIX 2: added error state for confirm password mismatch
+    if (password !== "" && password !== confirmPassword) {
+      setConfirmPasswordError("Passwords do NOT match!");
       valid = false;
+    } else {
+      setConfirmPasswordError("");
     }
 
     if (!valid) return;
@@ -65,11 +67,16 @@ function ResetPassword() {
       console.log("Response:", data);
 
       if (res.ok) {
-        console.log("Password reset successful");
-        navigate("/login");
+        // FIX 3: save new token returned by server + correct route path
+        localStorage.setItem("token", data.token);
+        navigate("/LogIn");
+      } else {
+        // FIX 4: show server error to user instead of silently failing
+        setPasswordError(data.message || "Reset failed. The link may have expired.");
       }
     } catch (error) {
       console.log("Error:", error);
+      setPasswordError("Cannot connect to server. Please make sure the server is running.");
     }
   };
 
@@ -126,9 +133,9 @@ function ResetPassword() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          {confirmPassword && password !== confirmPassword && (
+          {confirmPasswordError && (
             <Text color={"red"} fontSize={"sm"}>
-              Passwords do NOT match
+              {confirmPasswordError}
             </Text>
           )}
 
