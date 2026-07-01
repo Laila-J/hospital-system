@@ -1,67 +1,49 @@
-// ============================================================
-//  المكتبات المستخدمة من React
-//  useState  : لحفظ البيانات التي تتغير (مثل قيم الفورم)
-//  useEffect : لتنفيذ كود عند تحميل الصفحة لأول مرة
-//  useRef    : لحفظ قيمة لا تُعيد رسم الصفحة عند تغييرها
-// ============================================================
 import { useState, useEffect, useRef } from "react";
+const API_URL = "http://localhost:5000/api";
 
+// const DEFAULT_DOCTORS = [
+//   {
+//     id: 1,
+//     nameEn: "Dr. Sarah Al-Farsi",
+//     nameAr: "د. سارة الفارسي",
+//     specialtyEn: "Cardiology",
+//     specialtyAr: "طب القلب",
+//     available: true,   // true = متاح
+//   },
+//   {
+//     id: 2,
+//     nameEn: "Dr. Omar Othman",
+//     nameAr: "د. عمر عثمان",
+//     specialtyEn: "Orthopedics",
+//     specialtyAr: "العظام",
+//     available: true,
+//   },
+//   {
+//     id: 3,
+//     nameEn: "Dr. Layla Mansour",
+//     nameAr: "د. ليلى منصور",
+//     specialtyEn: "Pediatrics",
+//     specialtyAr: "طب الأطفال",
+//     available: true,
+//   },
+//   {
+//     id: 4,
+//     nameEn: "Dr. Khalid Ibrahim",
+//     nameAr: "د. خالد إبراهيم",
+//     specialtyEn: "Neurology",
+//     specialtyAr: "طب الأعصاب",
+//     available: false,  // false = غير متاح
+//   },
+//   {
+//     id: 5,
+//     nameEn: "Dr. Nora Saeed",
+//     nameAr: "د. نورة سعيد",
+//     specialtyEn: "Dermatology",
+//     specialtyAr: "الجلدية",
+//     available: true,
+//   },
+// ];
 
-// ============================================================
-//  قائمة الأطباء الافتراضية
-//  كل طبيب له: رقم تعريفي، اسم بالعربي والإنجليزي،
-//  تخصص بالعربي والإنجليزي، وهل هو متاح أم لا
-// ============================================================
-const DEFAULT_DOCTORS = [
-  {
-    id: 1,
-    nameEn: "Dr. Sarah Al-Farsi",
-    nameAr: "د. سارة الفارسي",
-    specialtyEn: "Cardiology",
-    specialtyAr: "طب القلب",
-    available: true,   // true = متاح
-  },
-  {
-    id: 2,
-    nameEn: "Dr. Omar Othman",
-    nameAr: "د. عمر عثمان",
-    specialtyEn: "Orthopedics",
-    specialtyAr: "العظام",
-    available: true,
-  },
-  {
-    id: 3,
-    nameEn: "Dr. Layla Mansour",
-    nameAr: "د. ليلى منصور",
-    specialtyEn: "Pediatrics",
-    specialtyAr: "طب الأطفال",
-    available: true,
-  },
-  {
-    id: 4,
-    nameEn: "Dr. Khalid Ibrahim",
-    nameAr: "د. خالد إبراهيم",
-    specialtyEn: "Neurology",
-    specialtyAr: "طب الأعصاب",
-    available: false,  // false = غير متاح
-  },
-  {
-    id: 5,
-    nameEn: "Dr. Nora Saeed",
-    nameAr: "د. نورة سعيد",
-    specialtyEn: "Dermatology",
-    specialtyAr: "الجلدية",
-    available: true,
-  },
-];
-
-
-// ============================================================
-//  قاموس الترجمة (النصوص بالعربي والإنجليزي)
-//  T["en"] = النصوص الإنجليزية
-//  T["ar"] = النصوص العربية
-//  بدلاً من كتابة if/else في كل مكان، نختار اللغة مرة واحدة
-// ============================================================
 const T = {
   en: {
     badge:       "CLINICAL PRECISION",
@@ -69,13 +51,12 @@ const T = {
     headline2:   "Our Priority.",
     sub:         "Secure your consultation with Al Othman's world-class medical specialists. Human-centric care powered by advanced medical technology.",
     support:     "24/7 Support",
-    phone:       "+963 992 966 431",   // رقم سوري
+    phone:       "+963 992 966 431",   
     formTitle:   "Book Appointment",
     formSub:     "New appointment",
-    step:        "Step 1 of 2",
     patientName: "Patient Name",
     phoneNumber: "Phone Number",
-    namePH:      "laila younes",        // PH = placeholder (نص التلميح داخل الحقل)
+    namePH:      "laila younes",        
     phonePH:     "+963 9XX XXX XXX",
     specialist:  "Specialist / Doctor",
     specialistPH:"Select a Specialist",
@@ -112,7 +93,6 @@ const T = {
     phone:       "+963 992 966 431",
     formTitle:   "حجز موعد",
     formSub:     "حجز موعد جديد",
-    step:        "الخطوة ١ من ٢",
     patientName: "اسم المريض",
     phoneNumber: "رقم الجوال",
     namePH:      "اسمك هنا",
@@ -145,39 +125,10 @@ const T = {
   },
 };
 
-
-// ============================================================
-//  دالة مساعدة: تُرجع تاريخ اليوم بصيغة "YYYY-MM-DD"
-//  مثال: "2025-06-08"
-//  نستخدمها لمنع اختيار تواريخ في الماضي
-// ============================================================
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 
-
-// ============================================================
-//  دالة تُحاكي إرسال البيانات للسيرفر (وهمية للتجربة)
-//  تنتظر 1.4 ثانية ثم ترجع نجاح
-//  في المشروع الحقيقي ستُستبدل بـ fetch() أو axios
-// ============================================================
-function simulateApiCall(data) {
-  return new Promise(function (resolve) {
-    setTimeout(function () {
-      resolve({ ok: true, data: data });
-    }, 1400);
-  });
-}
-
-
-// ============================================================
-//  ألوان الواجهة (ثابتة — لا تتغير أبداً)
-//  نضعها خارج المكوّن حتى لا تُعاد إنشاؤها عند كل render
-//  navy  = أزرق داكن  |  blue  = أزرق فاتح
-//  slate = رمادي      |  muted = رمادي فاتح
-//  border= لون الحدود |  bg    = لون الخلفية
-//  err   = لون الخطأ (أحمر)
-// ============================================================
 const COLORS = {
   navy:   "#0b3d7a",
   blue:   "#1565c0",
@@ -188,22 +139,13 @@ const COLORS = {
   err:    "#ef4444",
 };
 
-
-// ============================================================
-//  CSS عام للصفحة
-//  نكتبه هنا كنص ثم نُضيفه لـ <head> مرة واحدة عند التحميل
-//  يحتوي على: الخطوط، التركيز، الأنيميشن، الـ Responsive
-// ============================================================
 const GLOBAL_CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap');
 
-/* إزالة الـ margin والـ padding الافتراضيين من كل العناصر */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* الخط الرئيسي للصفحة */
 .aoh-root { font-family: 'Plus Jakarta Sans', 'Tajawal', sans-serif; }
 
-/* تأثير التركيز عند الضغط على حقل الإدخال */
 .aoh-input:focus, .aoh-select:focus {
   border-color: #1565c0 !important;
   box-shadow: 0 0 0 3px rgba(21,101,192,0.13) !important;
@@ -211,10 +153,8 @@ const GLOBAL_CSS = `
   outline: none;
 }
 
-/* تلوين الحقل باللون الأحمر عند وجود خطأ */
 .aoh-input.err { border-color: #ef4444 !important; background: #fff5f5 !important; }
 
-/* تأثير الزر عند تمرير الماوس */
 .aoh-btn-primary:not(:disabled):hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 30px rgba(11,61,122,0.45) !important;
@@ -224,19 +164,16 @@ const GLOBAL_CSS = `
 .aoh-footer-lnk:hover { color: #0b3d7a !important; }
 .aoh-nav-item:hover  { color: #0b3d7a !important; }
 
-/* أنيميشن: ظهور من الأسفل للأعلى */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* أنيميشن: نبضة خضراء عند النجاح */
 @keyframes pulse {
   0%, 100% { box-shadow: 0 0 0 0   rgba(34,197,94,.38); }
   50%       { box-shadow: 0 0 0 9px rgba(34,197,94,0);   }
 }
 
-/* أنيميشن: دوران لأيقونة التحميل */
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .aoh-card        { animation: fadeUp  .45s ease both; }
@@ -244,7 +181,6 @@ const GLOBAL_CSS = `
 .aoh-success-icon{ animation: pulse  1.8s ease infinite; }
 .aoh-spin        { display: inline-block; animation: spin .8s linear infinite; }
 
-/* تصميم الموبايل — عند عرض أقل من 768px */
 @media (max-width: 768px) {
   .aoh-page      { grid-template-columns: 1fr !important; padding: 1.5rem 1rem 3rem !important; gap: 2rem !important; }
   .aoh-form-grid { grid-template-columns: 1fr !important; }
@@ -253,30 +189,6 @@ const GLOBAL_CSS = `
 @media (max-width: 480px) { .aoh-card { padding: 1.25rem !important; } }
 `;
 
-
-// ============================================================
-//  مكوّن حقل الإدخال (Field)
-//  ────────────────────────────────────────────────────────
-//  ⚠️ مهم جداً: هذا المكوّن مُعرَّف خارج الدالة الرئيسية
-//  لأنه لو كان بالداخل سيُعاد إنشاؤه من الصفر عند كل تغيير
-//  وهذا يُسبب فقدان الـ focus عند الكتابة
-//  ────────────────────────────────────────────────────────
-//  Props (المعطيات) التي يستقبلها:
-//  name        = اسم الحقل (مثل "patientName")
-//  label       = نص التسمية فوق الحقل
-//  labelEn     = النص الإنجليزي الصغير (يظهر في وضع عربي فقط)
-//  icon        = الأيقونة (إيموجي)
-//  type        = نوع الحقل (text, tel, date, time)
-//  placeholder = نص التلميح داخل الحقل
-//  min         = أصغر قيمة مسموحة (للتاريخ)
-//  errors      = كائن يحوي رسائل الأخطاء
-//  form        = كائن يحوي قيم الفورم الحالية
-//  onChange    = الدالة التي تُنفَّذ عند تغيير القيمة
-//  loading     = هل الفورم بحالة تحميل؟
-//  success     = هل تم الحجز بنجاح؟
-//  isRtl       = هل الاتجاه من اليمين لليسار (عربي)؟
-//  inputBase   = ستايل الإدخال الأساسي
-// ============================================================
 const Field = function ({
   name, label, labelEn, icon,
   type, placeholder, min,
@@ -284,16 +196,12 @@ const Field = function ({
   loading, success, isRtl, inputBase,
 }) {
 
-  // هل يوجد خطأ في هذا الحقل؟
   const hasError = errors[name] ? true : false;
 
-  // نحدد موضع الأيقونة: يمين في العربي، يسار في الإنجليزي
   const iconPosition = isRtl ? "right" : "left";
 
-  // نضيف كلاس "err" إذا كان فيه خطأ
   const inputClass = hasError ? "aoh-input err" : "aoh-input";
 
-  // ستايل إضافي عند الخطأ (يلوّن الحدود بالأحمر)
   const errorStyle = hasError
     ? { borderColor: COLORS.err, background: "#fff5f5" }
     : {};
@@ -301,7 +209,6 @@ const Field = function ({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
 
-      {/* تسمية الحقل */}
       <label style={{
         fontSize: "0.78rem",
         fontWeight: 600,
@@ -310,7 +217,6 @@ const Field = function ({
         justifyContent: "space-between",
       }}>
         {label}
-        {/* نُظهر الاسم الإنجليزي الصغير فقط في وضع اللغة العربية */}
         {isRtl && labelEn && (
           <span style={{ fontSize: "0.72rem", color: COLORS.muted, fontWeight: 400 }}>
             {labelEn}
@@ -318,22 +224,19 @@ const Field = function ({
         )}
       </label>
 
-      {/* حاوية الأيقونة والحقل */}
       <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
 
-        {/* أيقونة داخل الحقل */}
         <span style={{
           position: "absolute",
-          [iconPosition]: 12,     // يمين أو يسار حسب اللغة
+          [iconPosition]: 12,     
           color: COLORS.muted,
           fontSize: 14,
-          pointerEvents: "none",  // لا تتفاعل مع الماوس
+          pointerEvents: "none",  
           zIndex: 1,
         }}>
           {icon}
         </span>
 
-        {/* حقل الإدخال */}
         <input
           className={inputClass}
           style={{ ...inputBase, ...errorStyle }}
@@ -343,12 +246,11 @@ const Field = function ({
           type={type || "text"}
           placeholder={placeholder}
           min={min}
-          disabled={loading || success}  // نُعطّله أثناء التحميل أو بعد النجاح
+          disabled={loading || success}  
           aria-label={label}
         />
       </div>
 
-      {/* رسالة الخطأ (تظهر فقط إذا كان فيه خطأ) */}
       {hasError && (
         <span style={{
           fontSize: "0.73rem",
@@ -365,36 +267,15 @@ const Field = function ({
   );
 };
 
-
-// ============================================================
-//  المكوّن الرئيسي: AppointmentBooking
-//  ────────────────────────────────────────────────────────
-//  Props التي يستقبلها من الخارج:
-//  doctors     = قائمة الأطباء (الافتراضية هي DEFAULT_DOCTORS)
-//  initialLang = اللغة الابتدائية ("en" أو "ar")
-//  onSuccess   = دالة تُنفَّذ عند نجاح الحجز (اختيارية)
-// ============================================================
 export default function AppointmentBooking({
-  doctors     = DEFAULT_DOCTORS,
   initialLang = "en",
   onSuccess,
 }) {
 
-  // ─── حالة اللغة ────────────────────────────────────────
-  // lang     = اللغة الحالية ("en" أو "ar")
-  // setLang  = الدالة لتغييرها
   const [lang, setLang] = useState(initialLang);
-
-  // هل الاتجاه من اليمين لليسار؟ (صحيح فقط في العربي)
   const isRtl = lang === "ar";
-
-  // نختار النصوص المناسبة للغة الحالية
-  // مثلاً: t.formTitle سيكون "Book Appointment" أو "حجز موعد"
   const t = T[lang];
 
-
-  // ─── حالة بيانات الفورم ────────────────────────────────
-  // كائن يحوي قيم جميع الحقول، يبدأ كله فارغاً ""
   const [form, setForm] = useState({
     patientName:   "",
     phoneNumber:   "",
@@ -403,161 +284,153 @@ export default function AppointmentBooking({
     preferredTime: "",
   });
 
-
-  // ─── حالة الأخطاء ──────────────────────────────────────
-  // كائن يحوي رسائل خطأ لكل حقل
-  // مثال: { patientName: "اسم المريض مطلوب." }
   const [errors, setErrors] = useState({});
-
-  // رسالة الخطأ العامة (تظهر في الأعلى)
   const [globalErr, setGlobalErr] = useState("");
-
-
-  // ─── حالة الإرسال ──────────────────────────────────────
-  // loading = true أثناء انتظار رد السيرفر
   const [loading, setLoading] = useState(false);
-
-  // success = true بعد نجاح الحجز
   const [success, setSuccess] = useState(false);
 
+  // ...
+  const [doctors, setDoctors] = useState([]);
+  const [doctorsLoading, setDoctorsLoading] = useState(true);
+  const [doctorsError, setDoctorsError] = useState(false);
 
-  // ─── إضافة CSS للصفحة مرة واحدة فقط ─────────────────
-  // useRef هنا يحفظ قيمة "هل أضفنا الـ CSS؟" بدون إعادة رسم
   const cssAdded = useRef(false);
 
   useEffect(function () {
-    // إذا أضفنا CSS من قبل نتوقف فوراً
     if (cssAdded.current) return;
     cssAdded.current = true;
 
-    // ننشئ عنصر <style> ونضيفه لـ <head>
     const styleElement = document.createElement("style");
     styleElement.textContent = GLOBAL_CSS;
     document.head.appendChild(styleElement);
-  }, []); // المصفوفة الفارغة [] تعني: نفّذ مرة واحدة فقط عند التحميل
+  }, []);
 
+  function loadDoctors() {
+    setDoctorsLoading(true);
+    setDoctorsError(false);
 
-  // ─── دالة تحديث الفورم ─────────────────────────────────
-  // تُنفَّذ عند تغيير أي حقل
+    return fetch(`${API_URL}/doctors`)
+      .then(function (response) {
+        return response.json().then(function (result) {
+          if (!response.ok || !result.success) {
+            throw new Error(result.message || "Failed to load doctors");
+          }
+          return result;
+        });
+      })
+      .then(function (result) {
+        setDoctors(result.doctors);
+        setDoctorsLoading(false);
+      })
+      .catch(function () {
+        setDoctorsError(true);
+        setDoctorsLoading(false);
+      });
+  }
+  useEffect(function () {
+    loadDoctors();
+  }, []);
+
   function onChange(event) {
-    const fieldName  = event.target.name;   // اسم الحقل الذي تغيّر
-    const fieldValue = event.target.value;  // القيمة الجديدة
+    const fieldName  = event.target.name;   
+    const fieldValue = event.target.value; 
 
-    // نحدّث قيمة ذلك الحقل فقط (نبقي باقي الحقول كما هي)
     setForm(function (previousForm) {
       return { ...previousForm, [fieldName]: fieldValue };
     });
 
-    // نحذف رسالة الخطأ لهذا الحقل إذا كان المستخدم يكتب
     if (errors[fieldName]) {
       setErrors(function (previousErrors) {
         return { ...previousErrors, [fieldName]: "" };
       });
     }
 
-    // نحذف الخطأ العام أيضاً
     if (globalErr) {
       setGlobalErr("");
     }
   }
 
-
-  // ─── دالة التحقق من صحة البيانات ──────────────────────
-  // تتحقق من كل الحقول وتُرجع كائن الأخطاء
-  // إذا كان الكائن فارغاً = لا أخطاء = البيانات صحيحة
   function validate() {
     const foundErrors = {};
 
-    // تحقق من اسم المريض: يجب ألا يكون فارغاً
     if (!form.patientName.trim()) {
       foundErrors.patientName = t.errName;
     }
 
-    // تحقق من رقم الهاتف: يجب أن يحوي أرقاماً فقط (7 خانات على الأقل)
     const phoneIsEmpty   = !form.phoneNumber.trim();
     const phoneIsInvalid = !/^\+?[\d\s-]{7,}$/.test(form.phoneNumber);
     if (phoneIsEmpty || phoneIsInvalid) {
       foundErrors.phoneNumber = t.errPhone;
     }
 
-    // تحقق من اختيار الطبيب
     if (!form.doctorId) {
       foundErrors.doctorId = t.errDoctor;
     }
 
-    // تحقق من التاريخ
+
     if (!form.preferredDate) {
       foundErrors.preferredDate = t.errDate;
     } else if (form.preferredDate < getTodayDate()) {
-      // التاريخ المختار في الماضي
       foundErrors.preferredDate = t.errPast;
     }
 
-    // تحقق من الوقت
     if (!form.preferredTime) {
       foundErrors.preferredTime = t.errTime;
     }
-
     return foundErrors;
   }
 
-
-  // ─── دالة الإرسال ──────────────────────────────────────
-  // async = تعني أن الدالة تحوي عمليات تستغرق وقتاً (await)
   async function submit() {
-    // أولاً: نتحقق من البيانات
     const foundErrors = validate();
-
-    // إذا كان فيه أخطاء: نعرضها ونتوقف
     const hasErrors = Object.keys(foundErrors).length > 0;
     if (hasErrors) {
       setErrors(foundErrors);
       setGlobalErr(t.errAll);
-      return; // نخرج من الدالة هنا
+      return; 
     }
 
-    // لا أخطاء: نبدأ الإرسال
     setErrors({});
     setGlobalErr("");
-    setLoading(true); // نُشغّل أيقونة التحميل
+    setLoading(true); 
 
     try {
-      // نجد بيانات الطبيب المختار
-      const selectedDoctor = doctors.find(function (doctor) {
-        return String(doctor.id) === String(form.doctorId);
-      });
 
-      // نُعدّ البيانات التي سنرسلها
-      const payload = {
-        ...form,
-        doctorName:  selectedDoctor ? selectedDoctor.nameEn : "",
-        specialty:   selectedDoctor ? selectedDoctor.specialtyEn : "",
-        submittedAt: new Date().toISOString(),
-      };
+  const token = localStorage.getItem("token");
 
-      // نُرسل البيانات (وهمياً) — await = انتظر حتى تنتهي
-      await simulateApiCall(payload);
+const response = await fetch(`${API_URL}/appointments`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({
+    patientName: form.patientName,
+    phoneNumber: form.phoneNumber,
+    doctorId: form.doctorId,
+    preferredDate: form.preferredDate,
+    preferredTime: form.preferredTime,
+  }),
+});
 
-      // نجح الإرسال!
-      setSuccess(true);
+const result = await response.json();
 
-      // إذا أُعطينا دالة onSuccess من الخارج، ننفّذها
-      if (onSuccess) {
-        onSuccess(payload);
-      }
+if (!response.ok) {
+  throw new Error(result.message || "Failed to book appointment");
+}
+
+setSuccess(true);
+
+if (onSuccess) {
+  onSuccess(result);
+}
 
     } catch {
-      // حدث خطأ غير متوقع
       setGlobalErr("Something went wrong. Please try again.");
     } finally {
-      // سواء نجح أو فشل: نوقف التحميل
       setLoading(false);
     }
   }
 
-
-  // ─── دالة الإعادة ──────────────────────────────────────
-  // تُصفّر كل شيء لحجز موعد جديد
   function reset() {
     setForm({
       patientName:   "",
@@ -570,17 +443,11 @@ export default function AppointmentBooking({
     setGlobalErr("");
     setSuccess(false);
   }
-
-
-  // ─── ستايل حقل الإدخال الأساسي ───────────────────────
-  // يعتمد على isRtl لعكس الـ padding (الأيقونة تغيّر جانبها)
   const inputBase = {
     width:      "100%",
     height:     46,
     border:     `1.5px solid ${COLORS.border}`,
     borderRadius: 10,
-    // في العربي: الأيقونة يمين → padding يمين أكبر
-    // في الإنجليزي: الأيقونة يسار → padding يسار أكبر
     padding:    isRtl ? "0 38px 0 12px" : "0 12px 0 38px",
     fontSize:   "0.875rem",
     color:      "#1a2332",
@@ -589,11 +456,6 @@ export default function AppointmentBooking({
     fontFamily: "inherit",
     direction:  isRtl ? "rtl" : "ltr",
   };
-
-
-  // ─── Props المشتركة للـ Field ──────────────────────────
-  // بدلاً من كتابتها في كل استخدام لـ Field، نجمعها هنا
-  // {...fieldProps} تعني "انشر كل هذه الخصائص كـ props"
   const fieldProps = {
     errors:    errors,
     form:      form,
@@ -604,10 +466,6 @@ export default function AppointmentBooking({
     inputBase: inputBase,
   };
 
-
-  // ──────────────────────────────────────────────────────
-  //  بيانات البطاقات الثلاث الصغيرة في القسم الأيسر
-  // ──────────────────────────────────────────────────────
   const featureTiles = [
     {
       bg:    "linear-gradient(135deg, #0f2a4a, #1a4a7a)",
@@ -629,10 +487,6 @@ export default function AppointmentBooking({
     },
   ];
 
-
-  // ══════════════════════════════════════════════════════
-  //  JSX: هيكل الصفحة المرئية
-  // ══════════════════════════════════════════════════════
   return (
     <div
       className="aoh-root"
@@ -644,10 +498,6 @@ export default function AppointmentBooking({
         paddingTop:"90px"
       }}
     >
-
-
-
-      {/* ── قسم المحتوى الرئيسي (عمودان: يسار = Hero، يمين = فورم) ── */}
       <main
         className="aoh-page"
         style={{
@@ -655,19 +505,15 @@ export default function AppointmentBooking({
           margin:               "0 auto",
           padding:              "3rem 1.5rem 4rem",
           display:              "grid",
-          gridTemplateColumns:  "1fr 1.1fr", // عمود لليسار وعمود أعرض قليلاً لليمين
+          gridTemplateColumns:  "1fr 1.1fr", 
           gap:                  "3rem",
           alignItems:           "start",
         }}
       >
-
-        {/* ════════════════ القسم الأيسر: Hero ════════════════ */}
         <section
           className="aoh-hero"
           style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
         >
-
-          {/* شارة النص الصغيرة في الأعلى */}
           <div style={{
             display:      "inline-flex",
             alignItems:   "center",
@@ -685,7 +531,6 @@ export default function AppointmentBooking({
             🛡 {t.badge}
           </div>
 
-          {/* العنوان الكبير */}
           <h1 style={{
             fontSize:      "clamp(2rem, 5vw, 2.8rem)",
             fontWeight:    800,
@@ -698,7 +543,6 @@ export default function AppointmentBooking({
             <span style={{ color: COLORS.blue }}>{t.headline2}</span>
           </h1>
 
-          {/* النص التوضيحي */}
           <p style={{
             fontSize:   "0.92rem",
             lineHeight: 1.75,
@@ -708,7 +552,6 @@ export default function AppointmentBooking({
             {t.sub}
           </p>
 
-          {/* بطاقة رقم الهاتف */}
           <div style={{
             display:      "flex",
             alignItems:   "center",
@@ -719,7 +562,7 @@ export default function AppointmentBooking({
             maxWidth:     360,
             boxShadow:    "0 4px 20px rgba(11,61,122,.25)",
           }}>
-            {/* أيقونة الهاتف */}
+        
             <div style={{
               width:        40,
               height:       40,
@@ -733,7 +576,6 @@ export default function AppointmentBooking({
             }}>
               📞
             </div>
-            {/* النص والرقم */}
             <div>
               <div style={{ fontSize: "0.73rem", color: "rgba(255,255,255,.6)", fontWeight: 500, marginBottom: 2 }}>
                 {t.support}
@@ -744,10 +586,8 @@ export default function AppointmentBooking({
             </div>
           </div>
 
-          {/* البطاقات الثلاث الصغيرة */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
 
-            {/* .map() تمر على كل عنصر في المصفوفة وتُنشئ JSX له */}
             {featureTiles.map(function (tile, index) {
               return (
                 <div
@@ -763,7 +603,6 @@ export default function AppointmentBooking({
                     padding:        "0.75rem",
                   }}
                 >
-                  {/* الأيقونة — البطاقة الثالثة (النجمة) تكون أصغر وأشفاف */}
                   <div style={{
                     fontSize:    index === 2 ? 18 : 20,
                     color:       index === 2 ? "rgba(255,255,255,.55)" : "inherit",
@@ -772,12 +611,10 @@ export default function AppointmentBooking({
                     {tile.icon}
                   </div>
 
-                  {/* العنوان */}
                   <div style={{ fontSize: "0.77rem", fontWeight: 700, color: "#fff" }}>
                     {tile.title}
                   </div>
 
-                  {/* النص الفرعي (إذا كان موجوداً) */}
                   {tile.sub && (
                     <div style={{ fontSize: "0.67rem", color: "rgba(255,255,255,.65)", lineHeight: 1.3, marginTop: 2 }}>
                       {tile.sub}
@@ -789,10 +626,7 @@ export default function AppointmentBooking({
           </div>
 
         </section>
-        {/* ════ نهاية القسم الأيسر ════ */}
 
-
-        {/* ════════════════ القسم الأيمن: بطاقة الفورم ════════════════ */}
         <section>
           <div
             className="aoh-card"
@@ -803,8 +637,6 @@ export default function AppointmentBooking({
               boxShadow:    "0 8px 40px rgba(11,61,122,.1), 0 1px 3px rgba(0,0,0,.05)",
             }}
           >
-
-            {/* ── رأس البطاقة: العنوان فقط (بدون رقم الخطوة) ── */}
             <div style={{ marginBottom: 4 }}>
               <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: COLORS.navy, letterSpacing: "-0.02em" }}>
                 {t.formTitle}
@@ -814,12 +646,10 @@ export default function AppointmentBooking({
               </p>
             </div>
 
-            {/* ── زر تبديل اللغة ── */}
             <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "0.5rem" }}>
               <button
                 className="aoh-lang-btn"
                 onClick={function () {
-                  // إذا اللغة الحالية إنجليزي → حوّل لعربي، والعكس
                   setLang(lang === "en" ? "ar" : "en");
                 }}
                 style={{
@@ -835,12 +665,10 @@ export default function AppointmentBooking({
                   fontFamily:   "inherit",
                 }}
               >
-                {/* إذا الإنجليزي: أظهر "عربي" والعكس */}
                 {lang === "en" ? "عربي" : "EN"}
               </button>
             </div>
 
-            {/* ── رسالة الخطأ العامة (تظهر فقط إذا كانت غير فارغة) ── */}
             {globalErr && (
               <div style={{
                 background:   "#fff5f5",
@@ -858,13 +686,10 @@ export default function AppointmentBooking({
               </div>
             )}
 
-            {/* ── شبكة الحقول ── */}
             <div
               className="aoh-form-grid"
               style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}
             >
-
-              {/* حقل اسم المريض */}
               <Field
                 name="patientName"
                 label={t.patientName}
@@ -874,7 +699,6 @@ export default function AppointmentBooking({
                 {...fieldProps}
               />
 
-              {/* حقل رقم الهاتف */}
               <Field
                 name="phoneNumber"
                 label={t.phoneNumber}
@@ -885,10 +709,10 @@ export default function AppointmentBooking({
                 {...fieldProps}
               />
 
-              {/* قائمة اختيار الطبيب — تمتد على العمودين كاملاً */}
+              
               <div style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: 5 }}>
 
-                {/* تسمية القائمة */}
+                
                 <label style={{
                   fontSize:        "0.78rem",
                   fontWeight:      600,
@@ -904,10 +728,9 @@ export default function AppointmentBooking({
                   )}
                 </label>
 
-                {/* حاوية القائمة المنسدلة مع الأيقونة */}
+              
                 <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
 
-                  {/* أيقونة الطبيب */}
                   <span style={{
                     position:      "absolute",
                     [isRtl ? "right" : "left"]: 12,
@@ -919,12 +742,10 @@ export default function AppointmentBooking({
                     🩺
                   </span>
 
-                  {/* القائمة المنسدلة */}
                   <select
                     className={errors.doctorId ? "aoh-select err" : "aoh-select"}
                     style={{
                       ...inputBase,
-                      // نحتاج padding مختلف لأن الأيقونة من اليمين والسهم من اليسار
                       padding:    isRtl ? "0 38px 0 32px" : "0 32px 0 38px",
                       appearance: "none",  // نخفي السهم الافتراضي للمتصفح
                       cursor:     "pointer",
@@ -938,12 +759,11 @@ export default function AppointmentBooking({
                     disabled={loading || success}
                     aria-label={t.specialist}
                   >
-                    {/* الخيار الافتراضي الفارغ */}
+                    
                     <option value="">{t.specialistPH}</option>
 
-                    {/* نعرض كل طبيب كخيار */}
+                    
                     {doctors.map(function (doctor) {
-                      // نختار الاسم والتخصص حسب اللغة
                       const doctorName    = lang === "ar" ? doctor.nameAr    : doctor.nameEn;
                       const doctorSpecial = lang === "ar" ? doctor.specialtyAr : doctor.specialtyEn;
                       const unavailText   = doctor.available ? "" : ` (${t.unavail})`;
@@ -952,7 +772,7 @@ export default function AppointmentBooking({
                         <option
                           key={doctor.id}
                           value={doctor.id}
-                          disabled={!doctor.available}  // نعطّل الطبيب غير المتاح
+                          disabled={!doctor.available} 
                         >
                           {doctorName} — {doctorSpecial}{unavailText}
                         </option>
@@ -960,7 +780,6 @@ export default function AppointmentBooking({
                     })}
                   </select>
 
-                  {/* سهم القائمة المنسدلة (مخصص) */}
                   <span style={{
                     position:      "absolute",
                     [isRtl ? "left" : "right"]: 12,
@@ -972,27 +791,23 @@ export default function AppointmentBooking({
                   </span>
                 </div>
 
-                {/* رسالة خطأ الطبيب */}
                 {errors.doctorId && (
                   <span style={{ fontSize: "0.73rem", color: COLORS.err }}>
                     ⚠ {errors.doctorId}
                   </span>
                 )}
               </div>
-              {/* ── نهاية قائمة الطبيب ── */}
 
-              {/* حقل التاريخ */}
               <Field
                 name="preferredDate"
                 label={t.date}
                 labelEn="Preferred Date"
                 icon="📅"
                 type="date"
-                min={getTodayDate()}  // لا يسمح باختيار تاريخ ماضٍ
+                min={getTodayDate()}  
                 {...fieldProps}
               />
 
-              {/* حقل الوقت */}
               <Field
                 name="preferredTime"
                 label={t.time}
@@ -1003,11 +818,6 @@ export default function AppointmentBooking({
               />
 
             </div>
-            {/* ── نهاية شبكة الحقول ── */}
-
-
-            {/* ── زر الإرسال أو رسالة النجاح ── */}
-            {/* إذا لم يكن هناك نجاح بعد: أظهر الزر */}
             {!success ? (
               <>
                 <button
@@ -1037,15 +847,11 @@ export default function AppointmentBooking({
                   }}
                   aria-label={t.confirm}
                 >
-                  {/* أثناء التحميل: أيقونة دوارة + نص "جارٍ الحجز" */}
-                  {/* بعد التحميل: نص التأكيد + سهم */}
                   {loading
                     ? <><span className="aoh-spin">⏳</span>{t.loading}</>
                     : <>{t.confirm} <span style={{ fontSize: 14 }}>→</span></>
                   }
                 </button>
-
-                {/* ملاحظة الموافقة */}
                 <p style={{
                   fontSize:   "0.7rem",
                   color:      COLORS.muted,
@@ -1058,7 +864,6 @@ export default function AppointmentBooking({
               </>
 
             ) : (
-              /* إذا نجح الحجز: أظهر رسالة النجاح وزر الحجز من جديد */
               <>
                 <div style={{
                   display:      "flex",
@@ -1070,7 +875,6 @@ export default function AppointmentBooking({
                   padding:      "1rem 1.25rem",
                   marginTop:    "1.25rem",
                 }}>
-                  {/* أيقونة الصح الدائرية */}
                   <div
                     className="aoh-success-icon"
                     style={{
@@ -1089,7 +893,6 @@ export default function AppointmentBooking({
                     ✓
                   </div>
 
-                  {/* نص النجاح */}
                   <div>
                     <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#15803d" }}>
                       {t.successTitle}
@@ -1100,7 +903,7 @@ export default function AppointmentBooking({
                   </div>
                 </div>
 
-                {/* زر حجز موعد آخر */}
+
                 <button
                   onClick={reset}
                   style={{
@@ -1121,14 +924,9 @@ export default function AppointmentBooking({
                 </button>
               </>
             )}
-
           </div>
         </section>
-       
-
       </main>
-      
-
     </div>
   );
 }
