@@ -11,6 +11,7 @@ import AppointmentBooking from './AppointmentBooking'
 import Home from './Home'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import Doctors from './Doctors'
 
 function App() {
  return(
@@ -24,6 +25,7 @@ function App() {
     <Route path='/SignUp' element={<SignUp/>} />
     <Route path='/ResetPassword' element={<ResetPassword/>} />
     <Route path='/AppointmentBooking' element={<AppointmentBooking/>} />
+    <Route path='/Doctors' element={<Doctors/>} />
     
    </Routes>
    <Footer/>
