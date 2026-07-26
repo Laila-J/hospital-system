@@ -22,6 +22,15 @@ import doctor2 from "./assets/doctor2.jpg"
 import doctor3 from "./assets/doctor3.jpg"
 import doctor4 from "./assets/doctor4.jpg"
 import doctor5 from "./assets/doctor5.jpg"
+//import { useNavigate } from "react-router-dom";
+
+// const navigate=useNavigate();
+
+// const handleSubmit=()=>{
+  
+//   navigate("/AppointmentBooking")
+
+// }
 
 
 // Simple icon made with text/emoji since we are keeping things beginner-friendly
@@ -151,7 +160,7 @@ function Doctors() {
                 </Text>
 
                 <HStack mt={4} spacing={3}>
-                  <Button colorScheme="blue" bg="gray.800" size="sm" flex="1">
+                  <Button colorScheme="blue" bg="gray.800" size="sm" flex="1" /*onClick={handleSubmit}*/ >
                     Book Now
                   </Button>
                   <IconButton
