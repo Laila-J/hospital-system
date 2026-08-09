@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 const API_URL = "http://localhost:5000/api";
 
 // const DEFAULT_DOCTORS = [
@@ -271,6 +272,9 @@ export default function AppointmentBooking({
   initialLang = "en",
   onSuccess,
 }) {
+  
+  const[searchParams]=useSearchParams();
+  const doctorIdFromUrl= searchParams.get("doctor");
 
   const [lang, setLang] = useState(initialLang);
   const isRtl = lang === "ar";
@@ -305,6 +309,7 @@ export default function AppointmentBooking({
     document.head.appendChild(styleElement);
   }, []);
 
+
   function loadDoctors() {
     setDoctorsLoading(true);
     setDoctorsError(false);
@@ -320,6 +325,15 @@ export default function AppointmentBooking({
       })
       .then(function (result) {
         setDoctors(result.doctors);
+
+        if(doctorIdFromUrl){
+          setForm(function (prev){
+            return{
+              ...prev,
+              doctorId:doctorIdFromUrl
+            };
+          });
+        }
         setDoctorsLoading(false);
       })
       .catch(function () {

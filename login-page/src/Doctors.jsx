@@ -7,7 +7,6 @@ import {
   Heading,
   Text,
   Button,
-  Checkbox,
   Radio,
   RadioGroup,
   Divider,
@@ -18,6 +17,8 @@ import {
   IconButton,
   Spinner,
 } from "@chakra-ui/react";
+
+import { useNavigate } from "react-router-dom";
 
 import doctor1 from "./assets/doctor1.jpg";
 //import doctor2 from "./assets/doctor2.jpg";
@@ -37,6 +38,8 @@ function ProfileIcon() {
 }
 
 function Doctors() {
+
+  const navigate= useNavigate();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -220,7 +223,7 @@ function Doctors() {
           {/* Doctor Cards */}
           {!loading &&
             !error &&
-            doctors.map((doctor, index) => (
+            doctors.map((doctor) => (
               <Card
                 key={doctor.id}
                 borderRadius="md"
@@ -267,6 +270,7 @@ function Doctors() {
                       bg="gray.800"
                       size="sm"
                       flex="1"
+                      onClick={()=>navigate(`/AppointmentBooking?doctor=${doctor.id}`)}
                     >
                       Book Now
                     </Button>
