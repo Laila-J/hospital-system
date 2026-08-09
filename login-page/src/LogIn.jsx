@@ -129,7 +129,7 @@ function LogIn(){
                         LogIn
                     </Button>
 
-                    <Text color="gray.300" mx="auto" >Forgot your password? No worries! <Link to="/ResetPassword" >Reset password</Link></Text>
+                    <Text color="gray.300" mx="auto" >Forgot your password? No worries! <Link to="/ForgotPass" >Reset password</Link></Text>
 
                     <Text color="gray.300" mx="auto" >Don't have an account? <Link to="/SignUp">Sign Up</Link> </Text>
                 </VStack>

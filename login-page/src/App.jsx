@@ -12,6 +12,7 @@ import Home from './Home'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import Doctors from './Doctors'
+import ForgotPass from './ForgotPass'
 
 function App() {
  return(
@@ -23,7 +24,8 @@ function App() {
     <Route path='/LogIn' element={<LogIn/>} />
     <Route path='/Home' element={<Home/>} />
     <Route path='/SignUp' element={<SignUp/>} />
-    <Route path='/ResetPassword' element={<ResetPassword/>} />
+    <Route path='/ResetPassword/:token' element={<ResetPassword/>} />
+    <Route path='/ForgotPass' element={<ForgotPass/>} />
     <Route path='/AppointmentBooking' element={<AppointmentBooking/>} />
     <Route path='/Doctors' element={<Doctors/>} />
     
