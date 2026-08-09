@@ -74,7 +74,7 @@ function LogIn(){
                 if(res.ok){
                     // FIX 4: save token to localStorage
                     localStorage.setItem("token", data.token);
-                    navigate("/AppointmentBooking");
+                    navigate("/Home");
                 }else{
                     if(data.errors?.password){
                         setPasswordError(data.errors.password);
