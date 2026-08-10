@@ -9,6 +9,7 @@ const {
   getDoctorAppointments,
   getAppointments,
   getAppointmentById,
+  updateAppointment,
   updateAppointmentStatus,
   cancelAppointment,
 } = require("../controllers/appointmentController");
@@ -49,6 +50,13 @@ router.get("/", protect, authorize("admin", "receptionist"), getAppointments);
 
 // GET /api/appointments/:id
 router.get("/:id", protect, getAppointmentById);
+
+router.patch(
+  "/:id",
+  protect,
+  authorize("patient"),
+  updateAppointment
+);
 
 // PATCH /api/appointments/:id/status  -> confirm / complete / cancel
 router.patch(

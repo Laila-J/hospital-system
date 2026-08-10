@@ -27,8 +27,8 @@ import{Link as RouterLink} from 'react-router-dom'
             <HStack spacing={6} display={{ base: "none", md: "flex" }}>
               <Link href="/Home" >Home</Link>
               <Link href="/Doctors">Doctors</Link>
-              <Link href="/AppointmentBooking" >Appointments</Link>
-              <Link>Contact</Link>
+              <Link href="/AppointmentBooking" >Appointment Booking</Link>
+              <Link href="/MyAppointments">My Appointments</Link>
             </HStack>
 
             <Button

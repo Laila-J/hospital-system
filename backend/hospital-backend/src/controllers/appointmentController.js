@@ -141,6 +141,87 @@ const getAppointmentById = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, appointment });
 });
 
+//@desc Reschedule an appointment
+//@route PATCH /api/appointment/:id
+//@access Private (owning patient)
+const updateAppointment = asyncHandler(async (req, res)=>{
+  const {doctorId,preferredDate, preferredTime}=req.body;
+
+  const appointment= await Appointment.findById(req.params.id);
+
+  if(!appointment){
+    throw new ApiError(404, "Appointment not found.");
+  }
+
+  //Make sure the logged-in patient owns this appointment
+  const isOwningPatient=
+  appointment.patient&&
+  String(appointment.patient)=== String(req.user._id);
+
+  if(!isOwningPatient){
+    throw new ApiError(403, "You are not allowed to update this appointment.");
+  }
+
+  //Do not allow editing cancelled or completed appointments
+  if(["cancelled", "completed"].includes(appointment.status)){
+    throw new ApiError(400, "this appointment can no longer be changed.");
+  }
+
+  //if doctor is being changed, verify the new doctor
+  const newDoctorId=doctorId || appointment.doctor;
+
+  const doctor= await User.findOne({
+    _id:newDoctorId,
+    profileType:"Doctor",
+  });
+  if(!doctor){
+    throw new ApiError(400, "Please select a valid specialist.", {
+      doctorId: "Please select a valid specialist."
+    });
+  }
+
+  if(!doctor.available){
+      throw new ApiError(409, "This doctor is currently unavailable.", {
+        doctorId: "This doctor is currently unavailable."
+      });
+    }
+
+    //Update only the fields that were provided
+    appointment.doctor=doctor._id;
+    appointment.doctorName= `Dr. ${doctor.firstName} ${doctor.lastName}`;
+    appointment.specialty= doctor.occupation;
+
+    if(preferredDate){
+      appointment.preferredDate=preferredDate;
+    }
+
+    if(preferredTime){
+      appointment.preferredTime=preferredTime;
+    }
+
+    try{
+      await appointment.save();
+    } catch(err){
+      // Doctor/date/time slot is already occupied
+      if(err.code === 11000){
+        throw new ApiError(
+          409,
+          "This time slot is already booked. Please choose another time.",
+          {
+            preferredTime: "This time slot is already booked."
+          }
+        );
+      }
+      throw err;
+    }
+
+    res.status(200).json({
+      success:true,
+      message:"Appointment updated successfully.",
+      appointment,
+    });
+});
+
 // @desc    Update an appointment's status (confirm / complete / cancel)
 // @route   PATCH /api/appointments/:id/status
 // @access  Private (admin, receptionist, or the owning doctor)
@@ -203,4 +284,5 @@ module.exports = {
   getAppointmentById,
   updateAppointmentStatus,
   cancelAppointment,
+  updateAppointment,
 };

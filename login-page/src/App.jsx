@@ -1,7 +1,4 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-// import heroImg from './assets/hero.png'
+
 import './App.css'
 import { BrowserRouter,Routes, Route } from 'react-router-dom'
 import LogIn from './LogIn'
@@ -13,6 +10,7 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import Doctors from './Doctors'
 import ForgotPass from './ForgotPass'
+import MyAppointments from './MyAppointments'
 
 function App() {
  return(
@@ -28,6 +26,7 @@ function App() {
     <Route path='/ForgotPass' element={<ForgotPass/>} />
     <Route path='/AppointmentBooking' element={<AppointmentBooking/>} />
     <Route path='/Doctors' element={<Doctors/>} />
+    <Route path='/MyAppointments' element={<MyAppointments/>} />
     
    </Routes>
    <Footer/>
