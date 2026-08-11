@@ -18,9 +18,9 @@ function App() {
   <Navbar/>
    <Routes>
     
-    <Route path='/' element={<LogIn/>} />
-    <Route path='/LogIn' element={<LogIn/>} />
     <Route path='/Home' element={<Home/>} />
+    <Route path='/LogIn' element={<LogIn/>} />
+    <Route path='/' element={<Home/>} />
     <Route path='/SignUp' element={<SignUp/>} />
     <Route path='/ResetPassword/:token' element={<ResetPassword/>} />
     <Route path='/ForgotPass' element={<ForgotPass/>} />
