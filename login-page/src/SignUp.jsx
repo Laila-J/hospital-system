@@ -44,8 +44,8 @@ function SignUp(){
     const[occupation,setOccupation]=useState("");
     const[occupationError,setOccupationError]=useState("");
 
-    const[licenseSourse,setLicenseSource]=useState("");
-    const[licenseSourseError,setLicenseSourceError]=useState("");
+    const[licenseSource,setLicenseSource]=useState("");
+    const[licenseSourceError,setLicenseSourceError]=useState("");
 
     const[bloodType,setBloodType]=useState("");
     const[bloodTypeError,setBloodTypeError]=useState("");
@@ -101,7 +101,7 @@ function SignUp(){
                 setOccupationError("");
             }
 
-            if(licenseSourse===""){
+            if(licenseSource===""){
                 setLicenseSourceError("License source is required");
                 valid=false;
             }else{
@@ -179,7 +179,7 @@ function SignUp(){
                         nationalNumber,
                         ...(profileType==="Doctor" && {
                             occupation,
-                            licenseSource: licenseSourse,
+                            licenseSource: licenseSource,
                             yearsOfExperience,
                         }),
                         ...(profileType==="Patient" && {
@@ -197,7 +197,15 @@ function SignUp(){
                 if(res.ok){
                     // Save token to localStorage for use in protected routes
                     localStorage.setItem("token", data.token);
-                    navigate("/Home");
+
+                    localStorage.setItem("user", JSON.stringify(data.user));
+
+                    if(data.user.profileType==="Doctor"){
+                        navigate("/DoctorDashboard");
+                    }
+                    else{
+                        navigate("/Home");
+                    }
                 }else{
                     // Show server-side field errors if any
                     if(data.errors){
@@ -287,10 +295,10 @@ function SignUp(){
                         </Select>
 
                         <Text color="gray.300" fontSize={20}>License source:</Text>
-                        <Input placeholder="enter source of license" bg="gray.300" w="60%" value={licenseSourse} onChange={(e)=>setLicenseSource(e.target.value)} />
+                        <Input placeholder="enter source of license" bg="gray.300" w="60%" value={licenseSource} onChange={(e)=>setLicenseSource(e.target.value)} />
 
-                        {licenseSourseError&&(
-                            <Text color={"red"}>{licenseSourseError}</Text>
+                        {licenseSourceError&&(
+                            <Text color={"red"}>{licenseSourceError}</Text>
                         )}
                         </>
                     )}

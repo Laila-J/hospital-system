@@ -74,7 +74,16 @@ function LogIn(){
                 if(res.ok){
                     // FIX 4: save token to localStorage
                     localStorage.setItem("token", data.token);
-                    navigate("/Home");
+
+                    //save user info
+                    localStorage.setItem("user", JSON.stringify(data.user));
+
+                    //redirect according to account type
+                    if(data.user.profileType==="Doctor"){
+                        navigate("/DoctorDashboard");
+                    }else{
+                        navigate("/Home")
+                    }
                 }else{
                     if(data.errors?.password){
                         setPasswordError(data.errors.password);

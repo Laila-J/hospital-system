@@ -7,44 +7,103 @@ import {
   Button,
   Link,
 } from "@chakra-ui/react";
-import{Link as RouterLink} from 'react-router-dom'   
-   export default function Navbar(){
-    return(
-   <Box
-        position="fixed"
-        top="0"
-        w="100%"
-        bg="gray.200"
-        boxShadow="sm"
-        zIndex="999"
-      >
-        <Container maxW="1200px">
-          <Flex h="70px" align="center" justify="space-between">
-            <Heading size="md" color="#0F4C81">
-              Al Othman Hospital
-            </Heading>
+import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-            <HStack spacing={6} display={{ base: "none", md: "flex" }}>
-              <Link href="/Home" >Home</Link>
-              <Link href="/Doctors">Doctors</Link>
-              <Link href="/AppointmentBooking" >Appointment Booking</Link>
-              <Link href="/MyAppointments">My Appointments</Link>
-            </HStack>
+export default function Navbar() {
+  const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isDoctor = user?.role === "doctor";
+
+  return (
+    <Box
+      position="fixed"
+      top="0"
+      w="100%"
+      bg="gray.200"
+      boxShadow="sm"
+      zIndex="999"
+    >
+      <Container maxW="100%" px={0}>
+        <Flex h="70px" align="center" w="100%" px={{ base: 6, md: 10 }}>
+          {/* Hospital Name */}
+          <Heading size="md" color="#0F4C81" whiteSpace="nowrap" flexShrink={0}>
+            Al Othman Hospital
+          </Heading>
+
+          {/* Navigation */}
+          <HStack
+            spacing={4}
+            display={{ base: "none", md: "flex" }}
+            ml="auto"
+            whiteSpace="nowrap"
+          >
+            {/* Home - everyone */}
+            <Link href="/Home">Home</Link>
+
+            {/* Doctors - everyone */}
+            <Link href="/Doctors">Doctors</Link>
+
+            {/* Logged-in users */}
+            {user && (
+              <>
+                {isDoctor ? (
+                  <>
+                    <Link href="/DoctorDashboard">Doctor Dashboard</Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/AppointmentBooking">Appointment Booking</Link>
+
+                    <Link href="/MyAppointments">My Appointments</Link>
+                  </>
+                )}
+              </>
+            )}
+          </HStack>
+
+          {/* Login Button */}
+          {user ? (
             <Button
-              as={RouterLink}
-              to="./LogIn"
+              onClick={() => {
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                navigate("/LogIn");
+              }}
               size="sm"
-              px={6}
-              py={2}
+              px={5}
+              flexShrink={0}
               bg="#0F4C81"
               color="white"
-              display={{ base: "none", md: "block" }}
+              ml={4}
+              mr={2}
+              display={{ base: "none", md: "flex" }}
+              alignItems="center"
+              justifyContent="center"
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button
+              as={RouterLink}
+              to="/LogIn"
+              size="sm"
+              px={5}
+              flexShrink={0}
+              bg="#0F4C81"
+              color="white"
+              display={{ base: "none", md: "flex" }}
+              ml={4}
+              mr={2}
+              alignItems="center"
+              justifyContent="center"
             >
               Login
             </Button>
-          </Flex>
-        </Container>
-      </Box>
-    )
-   }
+          )}
+        </Flex>
+      </Container>
+    </Box>
+  );
+}

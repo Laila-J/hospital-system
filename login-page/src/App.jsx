@@ -11,6 +11,7 @@ import Footer from './Footer'
 import Doctors from './Doctors'
 import ForgotPass from './ForgotPass'
 import MyAppointments from './MyAppointments'
+import DoctorDashboard from './DoctorDashboard'
 
 function App() {
  return(
@@ -27,6 +28,7 @@ function App() {
     <Route path='/AppointmentBooking' element={<AppointmentBooking/>} />
     <Route path='/Doctors' element={<Doctors/>} />
     <Route path='/MyAppointments' element={<MyAppointments/>} />
+    <Route path='/DoctorDashboard' element={<DoctorDashboard/>} />
     
    </Routes>
    <Footer/>
