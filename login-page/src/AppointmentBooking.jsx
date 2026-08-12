@@ -772,7 +772,7 @@ if (onSuccess) {
                     name="doctorId"
                     value={form.doctorId}
                     onChange={onChange}
-                    disabled={loading || success}
+                    disabled={loading || success || doctorsLoading}
                     aria-label={t.specialist}
                   >
                     
