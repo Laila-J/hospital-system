@@ -97,7 +97,7 @@ export default function Home() {
                 Trusted Healthcare Excellence
               </Badge>
 
-              <Heading size="2xl">
+              <Heading size="2xl" color="gray.800">
                 Clinical Precision.{" "}
                 <Text as="span" color="#0F4C81">
                   Human-Centric
@@ -105,7 +105,7 @@ export default function Home() {
                 Care.
               </Heading>
 
-              <Text color="gray.500">
+              <Text color="gray.600">
                 We combine world-class medical expertise with genuine
                 compassion to deliver care that treats the whole person.
               </Text>
@@ -115,8 +115,8 @@ export default function Home() {
                   Book Appointment
                 </Button>
 
-                <Button variant="outline" colorScheme="blue">
-                  Our Doctors
+                <Button as={RouterLink} to="/Doctors" variant="outline" colorScheme="blue">
+                Our Doctors
                 </Button>
               </HStack>
             </VStack>

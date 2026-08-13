@@ -21,16 +21,18 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import doctor1 from "./assets/doctor1.jpg";
-//import doctor2 from "./assets/doctor2.jpg";
+import doctor2 from "./assets/doctor2.jpg";
 import doctor3 from "./assets/doctor3.jpg";
 import doctor4 from "./assets/doctor4.jpg";
-//import doctor5 from "./assets/doctor5.jpg";
+import doctor5 from "./assets/doctor5.jpg";
 
 // صور مؤقتة حسب ترتيب الدكاترة الموجودين
 const doctorImages = {
   "Dr. Sarah Al-Farsi":doctor4,
   "Dr. Omar Othman": doctor1,
-  "Dr. Layla Mansour":doctor3
+  "Dr. Layla Mansour":doctor3,
+  "Dr. sara ahmad": doctor5,
+  "Dr. Adam Khalil": doctor2,
 };
 
 function ProfileIcon() {
@@ -234,7 +236,7 @@ function Doctors() {
                   alt={doctor.nameEn}
                   h="330px"
                   w="100%"
-                  objectFit="cover"
+                  objectFit="contain"
                 />
 
                 <CardBody>
@@ -280,6 +282,7 @@ function Doctors() {
                       icon={<ProfileIcon />}
                       variant="outline"
                       size="sm"
+                      onClick={()=>navigate(`/DoctorProfile/${doctor.id}`)}
                     />
 
                   </HStack>

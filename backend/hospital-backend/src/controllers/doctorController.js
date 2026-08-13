@@ -17,6 +17,8 @@ function toDoctorDTO(doc) {
     specialtyEn: doc.occupation,
     specialtyAr: doc.specialtyAr || doc.occupation,
     available: doc.available,
+    yearsOfExperience: doc.yearsOfExperience,
+    email: doc.email,
   };
 }
 

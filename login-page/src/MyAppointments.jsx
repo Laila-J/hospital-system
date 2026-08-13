@@ -26,9 +26,12 @@ function MyAppointments(){
         const token=localStorage.getItem("token");
 
         if(!token){
+          // schedule state updates to avoid synchronous setState within effect
+          setTimeout(()=>{
             setError("Please log in to view your appointments");
             setLoading(false);
-            return;
+          },0);
+          return;
         }
 
         fetch("http://localhost:5000/api/appointments/me",{

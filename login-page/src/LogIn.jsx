@@ -25,7 +25,6 @@ function LogIn() {
   const handleSubmit = async () => {
     let valid = true;
 
-    // FIX 5: check empty first, then format
     if (email === "") {
       setValidEmail("Email is required!");
       setEmailError("");
@@ -39,7 +38,6 @@ function LogIn() {
       setValidEmail("");
     }
 
-    // FIX 5: check empty first, then length
     if (password === "") {
       setValidPassword("Password is required!");
       setPasswordError("");
@@ -55,13 +53,11 @@ function LogIn() {
 
     if (valid) {
       try {
-        // FIX 1: http not https
         const res = await fetch("http://localhost:5000/api/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          // FIX 3: send remember to API
           body: JSON.stringify({ email, password, remember: checked }),
         });
         console.log("response:", res.status);
@@ -71,9 +67,9 @@ function LogIn() {
         console.log(data);
 
         if (res.ok) {
-          // FIX 4: save token to localStorage
           localStorage.setItem("token", data.token);
-          navigate("/Dashboard");
+          localStorage.setItem("user", JSON.stringify(data.user));
+          navigate("/Home");
         } else {
           if (data.errors?.password) {
             setPasswordError(data.errors.password);
