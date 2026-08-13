@@ -377,7 +377,7 @@ function SignUp(){
                         Sign Up
                     </Button>
 
-                    <Text mx="auto" fontSize={18} color="gray.300">Already have an account? <Link to="/">Log In!</Link></Text>
+                    <Text mx="auto" fontSize={18} color="gray.300">Already have an account? <Link to="/Login">Log In!</Link></Text>
 
 
 
