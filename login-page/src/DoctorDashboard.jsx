@@ -1,14 +1,53 @@
-import { Box, Heading, Text, HStack, VStack } from "@chakra-ui/react";
+import { Box, Heading, Text, HStack, VStack, Switch } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
 function DoctorDashboard() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+
+  const [user, setUser] = useState(storedUser);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
 
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const toggleAvailability = async () => {
+    const token = localStorage.getItem("token");
+    const newAvailable = !user?.available;
+
+    setAvailabilityLoading(true);
+
+    try {
+      const res = await fetch(
+        "http://localhost:5000/api/doctors/me/availability",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ available: newAvailable }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update availability");
+      }
+
+      const updatedUser = { ...user, available: data.doctor.available };
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+    } catch (error) {
+      console.log("Error updating availability:", error);
+      alert(error.message);
+    } finally {
+      setAvailabilityLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -98,9 +137,31 @@ function DoctorDashboard() {
 
   return (
     <Box minH="100vh" pt="120px" px="40px">
-      <Heading>
-        Welcome Dr. {user?.firstName} {user?.lastName} 👋
-      </Heading>
+      <HStack justify="space-between" align="center" flexWrap="wrap">
+        <Heading>
+          Welcome Dr. {user?.firstName} {user?.lastName} 👋
+        </Heading>
+
+        <HStack
+          spacing="3"
+          bg="white"
+          px="5"
+          py="3"
+          borderRadius="12px"
+          boxShadow="md"
+        >
+          <Text fontWeight="bold" color={user?.available ? "green.600" : "gray.500"}>
+            {user?.available ? "Available" : "Unavailable"}
+          </Text>
+          <Switch
+            colorScheme="green"
+            size="lg"
+            isChecked={!!user?.available}
+            isDisabled={availabilityLoading}
+            onChange={toggleAvailability}
+          />
+        </HStack>
+      </HStack>
 
       <Text mt="4">This is your Doctor Dashboard.</Text>
 
