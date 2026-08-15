@@ -73,7 +73,7 @@ function DoctorProfile() {
   }, [id]);
 
   return (
-    <Box bg="gray.50" minH="100vh" p={6}>
+    <Box bg="gray.50" minH="100vh" p={6} pt="90px">
       <Button
         variant="ghost"
         leftIcon={<BackArrowIcon boxSize={4} />}
