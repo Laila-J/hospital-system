@@ -37,11 +37,9 @@ export default function Footer(){
                 Quick Links
               </Heading>
               <VStack align="center">
-                <Link href="#" >Home</Link>
-                <Link>Doctors</Link>
+                <Link href="/Home" >Home</Link>
+                <Link href="/Doctors">Doctors</Link>
                 <Link href="/AppointmentBooking" >Appointments</Link>
-                <Link href="#services" >Services</Link>
-                <Link>Contact</Link>
               </VStack>
             </Box>
 
