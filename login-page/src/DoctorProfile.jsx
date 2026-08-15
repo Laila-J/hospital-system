@@ -126,7 +126,7 @@ function DoctorProfile() {
                 {doctor.nameEn}
               </Heading>
               <Text color="gray.500" fontSize="sm" mt={1}>
-                {doctor.nameAr}
+                {doctor.nameEn}
               </Text>
             </Box>
 
