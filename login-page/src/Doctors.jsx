@@ -104,7 +104,6 @@ function Doctors() {
   return (
     <Box bg="gray.50" minH="100vh" p={6}>
 
-      {/* Page Title */}
       <Box mb={8}>
         <Heading size="lg" color="gray.800">
           Medical Team
@@ -115,7 +114,6 @@ function Doctors() {
         </Text>
       </Box>
 
-      {/* Main layout */}
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
 
         {/* Left Sidebar */}
@@ -188,7 +186,6 @@ function Doctors() {
           flex="1"
         >
 
-          {/* Loading */}
           {loading && (
             <Flex
               justify="center"
@@ -200,7 +197,6 @@ function Doctors() {
             </Flex>
           )}
 
-          {/* Error */}
           {!loading && error && (
             <Text
               color="red.500"
@@ -221,7 +217,6 @@ function Doctors() {
             </Text>
           )}
 
-          {/* Doctor Cards */}
           {!loading &&
             !error &&
             doctors.map((doctor) => (
