@@ -26,7 +26,6 @@ import doctor3 from "./assets/doctor3.jpg";
 import doctor4 from "./assets/doctor4.jpg";
 import doctor5 from "./assets/doctor5.jpg";
 
-// صور مؤقتة حسب ترتيب الدكاترة الموجودين
 const doctorImages = {
   "Dr. Sarah Al-Farsi":doctor4,
   "Dr. Omar Othman": doctor1,

@@ -157,7 +157,7 @@ function DoctorProfile() {
                 bg="gray.800"
                 mt={4}
                 onClick={() =>
-                  navigate(`/AppointmentBooking`)
+                  navigate(`/AppointmentBooking?doctor=${doctor._id}`)
                 }
               >
                 Book Now

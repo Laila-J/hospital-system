@@ -9,6 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
@@ -17,11 +18,12 @@ function getTodayDate() {
 function AppointmentBooking() {
   const [doctors, setDoctors] = useState([]);
   const [doctorsError, setDoctorsError] = useState("");
-
+  const [searchParams]=useSearchParams();
+  const doctorIdFromUrl=searchParams.get("doctor");
   const [form, setForm] = useState({
     patientName: "",
     phoneNumber: "",
-    doctorId: "",
+    doctorId: doctorIdFromUrl ||"",
     preferredDate: "",
     preferredTime: "",
   });
@@ -31,7 +33,6 @@ function AppointmentBooking() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Load the real doctors list from the backend.
   useEffect(() => {
     const loadDoctors = async () => {
       try {
