@@ -106,7 +106,6 @@ function LogIn() {
           />
 
           <Heading color="gray.300" mx="auto">
-            {" "}
             Log In
           </Heading>
 

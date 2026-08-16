@@ -60,7 +60,6 @@ function SignUp(){
 
 
      const handleSubmit=async()=>{
-        console.log("signup clicked");
 
         let valid=true;
 
@@ -92,7 +91,6 @@ function SignUp(){
             setProfileTypeError("");
         }
 
-        // FIX 2: validate doctor fields only when profileType is Doctor
         if(profileType==="Doctor"){
             if(occupation===""){
                 setOccupationError("Occupation is required");
@@ -112,7 +110,6 @@ function SignUp(){
             setLicenseSourceError("");
         }
 
-        // FIX 2: validate patient fields only when profileType is Patient
         if(profileType==="Patient"){
             if(bloodType===""){
                 setBloodTypeError("You must choose your blood type");
@@ -162,13 +159,12 @@ function SignUp(){
 
         if(valid){
             try{
-                // FIX 1: http not https for local development
+
                 const res=await fetch("http://localhost:5000/api/auth/register",{
                     method:"POST",
                     headers:{
                         "Content-Type":"application/json",
                     },
-                    // FIX 3: send doctor/patient specific fields based on profileType
                     body:JSON.stringify({
                         firstName,
                         lastName,
@@ -179,7 +175,7 @@ function SignUp(){
                         nationalNumber,
                         ...(profileType==="Doctor" && {
                             occupation,
-                            licenseSource: licenseSource,
+                            licenseSource,
                             yearsOfExperience,
                         }),
                         ...(profileType==="Patient" && {
@@ -195,7 +191,6 @@ function SignUp(){
                 console.log("response:",data);
 
                 if(res.ok){
-                    // Save token to localStorage for use in protected routes
                     localStorage.setItem("token", data.token);
 
                     localStorage.setItem("user", JSON.stringify(data.user));
@@ -207,7 +202,6 @@ function SignUp(){
                         navigate("/Home");
                     }
                 }else{
-                    // Show server-side field errors if any
                     if(data.errors){
                         if(data.errors.email) setEmailError(data.errors.email);
                         if(data.errors.nationalNumber) setNationalNumberError(data.errors.nationalNumber);
@@ -279,7 +273,7 @@ function SignUp(){
                     )}
 
                     {profileType==="Doctor"&& (<>
-                        <Text color="gray.300" fontSize={20} >choose occupation:</Text>
+                        <Text color="gray.300" fontSize={20} >Occupation:</Text>
                         <Input placeholder="enter occupation" bg="gray.300" w="60%" value={occupation} onChange={(e)=>setOccupation(e.target.value)} />
 
                         {occupationError&&(
