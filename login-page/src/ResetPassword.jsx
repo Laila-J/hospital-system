@@ -25,7 +25,6 @@ function ResetPassword() {
   const handleSubmit = async () => {
     let valid = true;
 
-    // empty check first, then length (FIX 1: was running both checks simultaneously)
     if (password === "") {
       setValidPassword("Password is required!");
       setPasswordError("");
@@ -39,7 +38,6 @@ function ResetPassword() {
       setValidPassword("");
     }
 
-    // FIX 2: added error state for confirm password mismatch
     if (password !== "" && password !== confirmPassword) {
       setConfirmPasswordError("Passwords do NOT match!");
       valid = false;
@@ -67,11 +65,9 @@ function ResetPassword() {
       console.log("Response:", data);
 
       if (res.ok) {
-        // FIX 3: save new token returned by server + correct route path
         localStorage.setItem("token", data.token);
         navigate("/LogIn");
       } else {
-        // FIX 4: show server error to user instead of silently failing
         setPasswordError(data.message || "Reset failed. The link may have expired.");
       }
     } catch (error) {

@@ -23,7 +23,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 const user = useMemo(() => readUser(), [location]);
   const isDoctor = user?.role === "doctor";
 
