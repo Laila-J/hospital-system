@@ -109,8 +109,7 @@ function MyAppointments(){
 
             //Update the appointment on the page immediately
             setAppointments((prev)=>
-            prev.map((appointment)=>
-            appointment._id===appointmentId?{...appointment, status:"cancelled"}: appointment));
+            prev.filter((appointment)=> appointment._id!==appointmentId));
         } catch(error){
             console.error("Cancel appointment error:", error);
             alert(error.message);
@@ -133,7 +132,7 @@ function MyAppointments(){
                         preferredDate: editDate,
                         preferredTime:editTime,
                     }),
-                }
+                }``
             );
 
             const data= await response.json();
