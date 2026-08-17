@@ -270,8 +270,8 @@ const cancelAppointment = asyncHandler(async (req, res) => {
     throw new ApiError(403, "You are not allowed to cancel this appointment.");
   }
 
-  appointment.status = "cancelled";
-  await appointment.save();
+  await appointment.deleteOne();
+  res.status(200).json({success:true, message:"Appointment cancelled.", appointment});
 
   res.status(200).json({ success: true, message: "Appointment cancelled.", appointment });
 });
