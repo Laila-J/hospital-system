@@ -1,7 +1,6 @@
 import {
   Box,
   Container,
-  //Flex,
   HStack,
   VStack,
   Stack,
@@ -11,9 +10,7 @@ import {
   Button,
   Image,
   Input,
-  //Link,
   Badge,
-  //Divider,
   useToast,
 } from "@chakra-ui/react";
 import{Link as RouterLink} from 'react-router-dom'

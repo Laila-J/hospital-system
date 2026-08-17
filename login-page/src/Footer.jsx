@@ -1,22 +1,13 @@
 import {
   Box,
   Container,
-  //Flex,
-  //HStack,
   VStack,
-  //Stack,
   SimpleGrid,
   Heading,
   Text,
-//   Button,
-//   Image,
-//   Input,
- Link,
-//   Badge,
+  Link,
   Divider,
-  //useToast,
 } from "@chakra-ui/react";
-//import{Link as RouterLink} from 'react-router-dom'
 
 export default function Footer(){
     return(
